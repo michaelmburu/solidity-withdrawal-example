@@ -13,12 +13,11 @@ contract WithdrawalPattern {
         _;
     }
 
-    //Not Safe to send refunds to addresses
-    function sendRefund() public onlyOwner returns (bool success) {}
-
-    //Safe - Allow addresses to claimRefunds/withdraw
-    function withdraw() public view returns (bool success){
-        require(balance[msg.sender] > 0);
-        msg.sender.transfer(balance[msg.sender]);
+    //Safe - Allow addresses to claimRefunds/withdrawfunds using the withdraw pattern
+    function withdrawFunds(uint amount) public returns (bool success){
+        require(balance[msg.sender] >= amount);
+        balance[msg.sender] -= amount; //optimistic accounting
+        payable(msg.sender).transfer(amount); //transfer
+        return true;
     }
 }
